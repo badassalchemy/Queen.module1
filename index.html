@@ -39,6 +39,9 @@
 <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.0/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
 
 <script type="text/babel">
 const e = React.createElement;
@@ -146,6 +149,7 @@ const MODULE_DATA = {
     },
     {
       id: 3, title: "The 8 Non-Negotiables of a Badass", dur: "10 min", type: "video",
+      videoUrl: "https://www.youtube.com/embed/bMBHCcSkaRI",
       desc: "Eight commitments. Eight choices. The Queen does not negotiate with herself on these. Watch the video, then make these your non-negotiables for the rest of these 90 days — and the rest of your life.",
       takeaways: [
         "The Queen does not negotiate with herself on what she has decided.",
@@ -258,6 +262,10 @@ const MODULE_DATA = {
 
 const STORAGE_KEY = "quantumqueen-module1-v1";
 
+// Google Drive config — replace with your own Client ID for production use
+const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com";
+const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.file";
+
 function App() {
   const [theme, setTheme] = useState("dark");
   const [active, setActive] = useState(0);
@@ -267,6 +275,8 @@ function App() {
   const [mobileNav, setMobileNav] = useState(false);
   const [saveStatus, setSaveStatus] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(null);
+  const [googleToken, setGoogleToken] = useState(null);
 
   const C = theme === "dark" ? DARK : LIGHT;
 
@@ -357,11 +367,317 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
-  const exportLesson = (lesson) => {
+  const downloadPDF = (filename, title, entries) => {
+    if (!window.jspdf) {
+      setSaveStatus("PDF loading...");
+      setTimeout(() => setSaveStatus(""), 2000);
+      return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 60;
+    const contentWidth = pageWidth - margin * 2;
+    let y = margin;
+
+    // Header band — deep mauve
+    doc.setFillColor(110, 56, 101);
+    doc.rect(0, 0, pageWidth, 90, "F");
+
+    // Title
+    doc.setFont("times", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Quantum Queen", margin, 42);
+
+    // Subtitle
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(58, 30, 51);
+    doc.text("BADASS ALCHEMY · BADDIE SOCIETY", margin, 58);
+
+    // Module + lesson title
+    doc.setFont("times", "italic");
+    doc.setFontSize(13);
+    doc.setTextColor(255, 255, 255);
+    doc.text(MODULE_DATA.title + " — " + MODULE_DATA.subtitle, margin, 76);
+
+    y = 130;
+
+    // Lesson title
+    doc.setFont("times", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(58, 30, 51);
+    doc.text(title, margin, y);
+    y += 24;
+
+    // Date
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(155, 112, 144);
+    doc.text("Saved " + new Date().toLocaleString(), margin, y);
+    y += 30;
+
+    if (entries.length === 0) {
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(12);
+      doc.setTextColor(120, 90, 110);
+      doc.text("No entries yet.", margin, y);
+    } else {
+      entries.forEach((entry, i) => {
+        // Prompt
+        doc.setFont("times", "bolditalic");
+        doc.setFontSize(13);
+        doc.setTextColor(110, 56, 101);
+        const promptLines = doc.splitTextToSize(entry.prompt, contentWidth);
+        promptLines.forEach(line => {
+          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+          doc.text(line, margin, y);
+          y += 17;
+        });
+        y += 6;
+
+        // Answer
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(60, 40, 55);
+        const textLines = doc.splitTextToSize(entry.text, contentWidth);
+        textLines.forEach(line => {
+          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+          doc.text(line, margin, y);
+          y += 15;
+        });
+        y += 20;
+
+        if (i < entries.length - 1) {
+          if (y > pageHeight - margin - 20) { doc.addPage(); y = margin; }
+          doc.setDrawColor(220, 200, 215);
+          doc.setLineWidth(0.5);
+          doc.line(margin, y, pageWidth - margin, y);
+          y += 25;
+        }
+      });
+    }
+
+    // Footer on each page
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(155, 112, 144);
+      doc.text("Badass Alchemy · Baddie Society · Quantum Queen", margin, pageHeight - 30);
+      doc.text("Page " + i + " of " + pageCount, pageWidth - margin - 50, pageHeight - 30);
+    }
+
+    doc.save(filename);
+  };
+
+  // Google Drive — request access token then upload
+  const authorizeGoogle = () => {
+    return new Promise((resolve, reject) => {
+      if (googleToken && googleToken.expiresAt > Date.now()) {
+        resolve(googleToken.access_token);
+        return;
+      }
+      if (!window.google || !window.google.accounts || !window.google.accounts.oauth2) {
+        reject(new Error("Google library not loaded"));
+        return;
+      }
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: GOOGLE_SCOPES,
+        callback: (response) => {
+          if (response.access_token) {
+            const tok = {
+              access_token: response.access_token,
+              expiresAt: Date.now() + (response.expires_in || 3600) * 1000
+            };
+            setGoogleToken(tok);
+            resolve(response.access_token);
+          } else {
+            reject(new Error("Authorization failed"));
+          }
+        },
+        error_callback: (err) => reject(err)
+      });
+      client.requestAccessToken();
+    });
+  };
+
+  const uploadToDrive = async (filename, content, mimeType) => {
+    if (GOOGLE_CLIENT_ID === "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com") {
+      alert("Google Drive isn't configured yet. Please add your Google OAuth Client ID to the file. See instructions in the README.");
+      return;
+    }
+    try {
+      setSaveStatus("Connecting to Drive...");
+      const token = await authorizeGoogle();
+      setSaveStatus("Uploading to Drive...");
+
+      const metadata = { name: filename, mimeType: mimeType };
+      const boundary = "qq_boundary_" + Date.now();
+      const delimiter = "\r\n--" + boundary + "\r\n";
+      const closeDelimiter = "\r\n--" + boundary + "--";
+
+      let body;
+      if (mimeType === "application/pdf") {
+        // Need base64 encoding for binary
+        const reader = new FileReader();
+        const base64 = await new Promise((res) => {
+          reader.onload = () => res(reader.result.split(",")[1]);
+          reader.readAsDataURL(content);
+        });
+        body =
+          delimiter +
+          "Content-Type: application/json\r\n\r\n" +
+          JSON.stringify(metadata) +
+          delimiter +
+          "Content-Type: " + mimeType + "\r\n" +
+          "Content-Transfer-Encoding: base64\r\n\r\n" +
+          base64 +
+          closeDelimiter;
+      } else {
+        body =
+          delimiter +
+          "Content-Type: application/json\r\n\r\n" +
+          JSON.stringify(metadata) +
+          delimiter +
+          "Content-Type: " + mimeType + "\r\n\r\n" +
+          content +
+          closeDelimiter;
+      }
+
+      const response = await fetch(
+        "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "multipart/related; boundary=" + boundary
+          },
+          body: body
+        }
+      );
+
+      if (response.ok) {
+        setSaveStatus("✦ Saved to Drive!");
+        setTimeout(() => setSaveStatus(""), 3000);
+      } else {
+        setSaveStatus("Drive upload failed");
+        setTimeout(() => setSaveStatus(""), 3000);
+      }
+    } catch (err) {
+      setSaveStatus("Drive: " + (err.message || "error"));
+      setTimeout(() => setSaveStatus(""), 3000);
+    }
+  };
+
+  const exportLessonTxt = (lesson) => {
     const entries = getEntries(lesson);
     const body = entries.length === 0 ? "No entries yet." : entries.map(en => en.prompt + "\n\n" + en.text + "\n\n────────────").join("\n\n");
     const content = "BADASS ALCHEMY · QUANTUM QUEEN\n" + MODULE_DATA.title + " — " + MODULE_DATA.subtitle + "\n" + lesson.title + "\nExported: " + new Date().toLocaleString() + "\n\n═════════════\n\n" + body;
     download("quantum-queen-" + lesson.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".txt", content);
+  };
+
+  const exportLessonPDF = (lesson) => {
+    const entries = getEntries(lesson);
+    const filename = "quantum-queen-" + lesson.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".pdf";
+    downloadPDF(filename, lesson.title, entries);
+  };
+
+  const exportLessonToDrive = async (lesson) => {
+    const entries = getEntries(lesson);
+    if (!window.jspdf) {
+      setSaveStatus("PDF library loading...");
+      setTimeout(() => setSaveStatus(""), 2000);
+      return;
+    }
+    // Generate PDF as blob
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 60;
+    const contentWidth = pageWidth - margin * 2;
+    let y = margin;
+
+    doc.setFillColor(110, 56, 101);
+    doc.rect(0, 0, pageWidth, 90, "F");
+    doc.setFont("times", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Quantum Queen", margin, 42);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(58, 30, 51);
+    doc.text("BADASS ALCHEMY · BADDIE SOCIETY", margin, 58);
+    doc.setFont("times", "italic");
+    doc.setFontSize(13);
+    doc.setTextColor(255, 255, 255);
+    doc.text(MODULE_DATA.title + " — " + MODULE_DATA.subtitle, margin, 76);
+    y = 130;
+    doc.setFont("times", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(58, 30, 51);
+    doc.text(lesson.title, margin, y);
+    y += 24;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(155, 112, 144);
+    doc.text("Saved " + new Date().toLocaleString(), margin, y);
+    y += 30;
+
+    if (entries.length === 0) {
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(12);
+      doc.setTextColor(120, 90, 110);
+      doc.text("No entries yet.", margin, y);
+    } else {
+      entries.forEach((entry, i) => {
+        doc.setFont("times", "bolditalic");
+        doc.setFontSize(13);
+        doc.setTextColor(110, 56, 101);
+        const promptLines = doc.splitTextToSize(entry.prompt, contentWidth);
+        promptLines.forEach(line => {
+          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+          doc.text(line, margin, y);
+          y += 17;
+        });
+        y += 6;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(60, 40, 55);
+        const textLines = doc.splitTextToSize(entry.text, contentWidth);
+        textLines.forEach(line => {
+          if (y > pageHeight - margin) { doc.addPage(); y = margin; }
+          doc.text(line, margin, y);
+          y += 15;
+        });
+        y += 20;
+        if (i < entries.length - 1) {
+          if (y > pageHeight - margin - 20) { doc.addPage(); y = margin; }
+          doc.setDrawColor(220, 200, 215);
+          doc.setLineWidth(0.5);
+          doc.line(margin, y, pageWidth - margin, y);
+          y += 25;
+        }
+      });
+    }
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8);
+      doc.setTextColor(155, 112, 144);
+      doc.text("Badass Alchemy · Baddie Society · Quantum Queen", margin, pageHeight - 30);
+      doc.text("Page " + i + " of " + pageCount, pageWidth - margin - 50, pageHeight - 30);
+    }
+
+    const pdfBlob = doc.output("blob");
+    const filename = "quantum-queen-" + lesson.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".pdf";
+    await uploadToDrive(filename, pdfBlob, "application/pdf");
   };
 
   const exportAll = () => {
@@ -473,7 +789,23 @@ function App() {
               </button>
             </div>
 
-            {lesson.type === "video" && (
+            {lesson.type === "video" && lesson.videoUrl && (
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, borderRadius: 14, overflow: "hidden", border: "1px solid " + C.borderMid, boxShadow: theme === "light" ? C.shadow : "0 4px 20px rgba(0,0,0,0.4)" }}>
+                  <iframe
+                    src={lesson.videoUrl}
+                    title={lesson.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                  />
+                </div>
+                <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, color: C.accent, textTransform: "uppercase", marginTop: 10, textAlign: "center" }}>✦ Video Lesson</div>
+              </div>
+            )}
+
+            {lesson.type === "video" && !lesson.videoUrl && (
               <div style={{ background: BRAND_GRAD, borderRadius: 14, border: "1px solid " + C.borderMid, padding: "24px 26px", marginBottom: 28, boxShadow: theme === "light" ? C.shadow : "none" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
                   <div style={{ width: 52, height: 52, minWidth: 52, borderRadius: "50%", background: "rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(255,255,255,0.4)" }}>
@@ -546,7 +878,17 @@ function App() {
                     ))}
                   </div>
                 ))}
-                <SaveExportButtons onSave={saveLessonJournals} onExport={() => exportLesson(lesson)} C={C} saveLabel="✦ Save Intake" />
+                <SaveExportButtons
+                  onSave={saveLessonJournals}
+                  onExportTxt={() => exportLessonTxt(lesson)}
+                  onExportPDF={() => exportLessonPDF(lesson)}
+                  onExportDrive={() => exportLessonToDrive(lesson)}
+                  C={C}
+                  saveLabel="✦ Save Intake"
+                  menuId="intake"
+                  exportMenuOpen={exportMenuOpen}
+                  setExportMenuOpen={setExportMenuOpen}
+                />
               </div>
             )}
 
@@ -571,9 +913,19 @@ function App() {
                     </div>
                   );
                 })}
-                <SaveExportButtons onSave={saveLessonJournals} onExport={() => exportLesson(lesson)} C={C} saveLabel="✦ Save Entries" />
+                <SaveExportButtons
+                  onSave={saveLessonJournals}
+                  onExportTxt={() => exportLessonTxt(lesson)}
+                  onExportPDF={() => exportLessonPDF(lesson)}
+                  onExportDrive={() => exportLessonToDrive(lesson)}
+                  C={C}
+                  saveLabel="✦ Save Entries"
+                  menuId="journal"
+                  exportMenuOpen={exportMenuOpen}
+                  setExportMenuOpen={setExportMenuOpen}
+                />
                 <div style={{ fontWeight: 500, fontSize: 11, color: C.txtFaded, lineHeight: 1.7, marginTop: 14, letterSpacing: 0.3 }}>
-                  Your entries save to this browser. Download the .txt to upload to Google Drive, Notion, or anywhere you keep your reflections.
+                  Your entries auto-save to this browser. Download a PDF, .txt, or send straight to Google Drive to keep them safe forever.
                 </div>
               </div>
             )}
@@ -603,7 +955,17 @@ function App() {
                     style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "16px 18px", fontSize: 14, color: C.txtSec, lineHeight: 1.8, resize: "vertical", marginTop: 8 }}
                   />
                 </div>
-                <SaveExportButtons onSave={saveLessonJournals} onExport={() => exportLesson(lesson)} C={C} saveLabel="✦ Save Letter" />
+                <SaveExportButtons
+                  onSave={saveLessonJournals}
+                  onExportTxt={() => exportLessonTxt(lesson)}
+                  onExportPDF={() => exportLessonPDF(lesson)}
+                  onExportDrive={() => exportLessonToDrive(lesson)}
+                  C={C}
+                  saveLabel="✦ Save Letter"
+                  menuId="letter"
+                  exportMenuOpen={exportMenuOpen}
+                  setExportMenuOpen={setExportMenuOpen}
+                />
               </div>
             )}
 
@@ -638,11 +1000,41 @@ function SectionHeader({ icon, label, color, status }) {
   );
 }
 
-function SaveExportButtons({ onSave, onExport, C, saveLabel }) {
+function SaveExportButtons({ onSave, onExportTxt, onExportPDF, onExportDrive, C, saveLabel, menuId, exportMenuOpen, setExportMenuOpen }) {
+  const isOpen = exportMenuOpen === menuId;
   return (
-    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4 }}>
+    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4, position: "relative" }}>
       <button onClick={onSave} style={{ flex: 1, minWidth: 120, fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.moonPrl, background: "linear-gradient(135deg," + C.accent + "," + C.darkMid + ")", padding: "12px 20px", borderRadius: 50, border: "none", cursor: "pointer", textTransform: "uppercase" }}>{saveLabel}</button>
-      <button onClick={onExport} style={{ flex: 1, minWidth: 120, fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.txt, background: "transparent", padding: "11px 20px", borderRadius: 50, border: "1px solid " + C.borderMid, cursor: "pointer", textTransform: "uppercase" }}>⬇ Download .txt</button>
+      <div style={{ flex: 1, minWidth: 120, position: "relative" }}>
+        <button onClick={() => setExportMenuOpen(isOpen ? null : menuId)} style={{ width: "100%", fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.txt, background: "transparent", padding: "11px 20px", borderRadius: 50, border: "1px solid " + C.borderMid, cursor: "pointer", textTransform: "uppercase", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+          ⬇ Export <span style={{ fontSize: 8, marginLeft: 2 }}>{isOpen ? "▲" : "▼"}</span>
+        </button>
+        {isOpen && (
+          <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, left: 0, background: C.bgCard, border: "1px solid " + C.borderMid, borderRadius: 14, padding: 6, zIndex: 50, boxShadow: "0 8px 28px rgba(45,15,35,0.4)" }}>
+            <button onClick={() => { onExportPDF(); setExportMenuOpen(null); }} style={{ width: "100%", textAlign: "left", padding: "11px 14px", border: "none", background: "transparent", color: C.txt, cursor: "pointer", borderRadius: 10, display: "flex", alignItems: "center", gap: 10, fontSize: 12, fontWeight: 600 }} onMouseEnter={(e) => e.currentTarget.style.background = C.inputBg} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+              <span style={{ fontSize: 14 }}>📄</span>
+              <div>
+                <div style={{ fontWeight: 700 }}>Download PDF</div>
+                <div style={{ fontSize: 9, color: C.txtFaded, marginTop: 1, fontWeight: 500 }}>Beautiful, printable</div>
+              </div>
+            </button>
+            <button onClick={() => { onExportTxt(); setExportMenuOpen(null); }} style={{ width: "100%", textAlign: "left", padding: "11px 14px", border: "none", background: "transparent", color: C.txt, cursor: "pointer", borderRadius: 10, display: "flex", alignItems: "center", gap: 10, fontSize: 12, fontWeight: 600 }} onMouseEnter={(e) => e.currentTarget.style.background = C.inputBg} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+              <span style={{ fontSize: 14 }}>📝</span>
+              <div>
+                <div style={{ fontWeight: 700 }}>Download .txt</div>
+                <div style={{ fontSize: 9, color: C.txtFaded, marginTop: 1, fontWeight: 500 }}>Plain text backup</div>
+              </div>
+            </button>
+            <button onClick={() => { onExportDrive(); setExportMenuOpen(null); }} style={{ width: "100%", textAlign: "left", padding: "11px 14px", border: "none", background: "transparent", color: C.txt, cursor: "pointer", borderRadius: 10, display: "flex", alignItems: "center", gap: 10, fontSize: 12, fontWeight: 600 }} onMouseEnter={(e) => e.currentTarget.style.background = C.inputBg} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+              <span style={{ fontSize: 14 }}>☁</span>
+              <div>
+                <div style={{ fontWeight: 700 }}>Save to Google Drive</div>
+                <div style={{ fontSize: 9, color: C.txtFaded, marginTop: 1, fontWeight: 500 }}>PDF straight to your Drive</div>
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
