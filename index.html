@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quantum Queen · Module 1 — The Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;width:100%;font-family:'Montserrat',sans-serif;background:#1F1320;color:#EDD8E5;overflow:hidden}
+  #root{height:100vh;width:100vw}
+  ::-webkit-scrollbar{height:3px;width:4px}
+  ::-webkit-scrollbar-thumb{background:rgba(181,123,174,0.32);border-radius:2px}
+  textarea{font-family:'Montserrat',sans-serif;font-weight:500}
+  button{font-family:'Montserrat',sans-serif;outline:none}
+  @keyframes fadeIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+  .lesson-content{animation:fadeIn .3s ease both}
+  @media(max-width:768px){
+    .desktop-only{display:none!important}
+    .mobile-only{display:flex!important}
+    .sidebar{position:absolute!important;left:0;top:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform .25s ease}
+    .sidebar.open{transform:translateX(0)}
+    .main-inner{padding:24px 20px 80px!important}
+    .lesson-top{flex-direction:column;gap:8px!important}
+    .lesson-bottom{flex-direction:column;align-items:stretch!important}
+    .lesson-bottom button{width:100%}
+  }
+  @media(min-width:769px){.mobile-only{display:none!important}}
+  #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#1F1320;color:#B57BAE;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;z-index:9999;flex-direction:column;gap:12px}
+  .spinner{width:32px;height:32px;border:2px solid rgba(181,123,174,0.2);border-top-color:#B57BAE;border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spinner"></div><div>✦ Loading your Quantum Queen…</div></div>
+<div id="root"></div>
+
+<script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.0/babel.min.js"></script>
+
+<script type="text/babel">
+const e = React.createElement;
+const { useState, useEffect } = React;
+
+const MAUVE_LIGHT = "#B57BAE";
+const MAUVE_DEEP = "#6E3865";
+const BRAND_GRAD = "linear-gradient(135deg, " + MAUVE_LIGHT + " 0%, " + MAUVE_DEEP + " 100%)";
+const SIDEBAR_IMG = "https://raw.githubusercontent.com/badassalchemy/imageassets/main/mainbackground1.jpg";
+
+const DARK = {
+  bg: "#1F1320", bgCard: "#2A1A2D", darkMid: MAUVE_DEEP,
+  accent: MAUVE_DEEP, accentLt: MAUVE_LIGHT, detail: "#C99CC1",
+  moonPrl: "#FAEFF4", txt: "#FAEFF4", txtSec: "#EDD8E5",
+  txtMuted: "#C9A8BE", txtFaded: "#9B7090",
+  border: "rgba(181,123,174,0.18)", borderMid: "rgba(181,123,174,0.32)",
+  inputBg: "#160C18", shadow: "0 4px 20px rgba(45,15,35,0.4)"
+};
+
+const LIGHT = {
+  bg: "#FBF5F8", bgCard: "#FFFFFF", darkMid: MAUVE_DEEP,
+  accent: MAUVE_DEEP, accentLt: MAUVE_LIGHT, detail: MAUVE_LIGHT,
+  moonPrl: "#FFFFFF", txt: "#3A1E33", txtSec: "#5A2F4E",
+  txtMuted: "#7A4A6C", txtFaded: "#A87A9A",
+  border: "rgba(110,56,101,0.12)", borderMid: "rgba(110,56,101,0.22)",
+  inputBg: "#FBF5F8", shadow: "0 4px 20px rgba(110,56,101,0.1)"
+};
+
+const MODULE_DATA = {
+  title: "Module 1",
+  subtitle: "The Foundation",
+  tagline: "You cannot build a queen's life on a victim's foundation.",
+  lessons: [
+    {
+      id: 0, title: "Welcome, Queen", dur: "8-12 min", type: "video",
+      desc: "Your invitation into the next 90 days. Why we start with the Foundation, what this module covers, and the truth that nobody tells you about building a queen's life. You will not be the same woman who started — and that begins here.",
+      takeaways: [
+        "You cannot build a queen's life on a victim's foundation — every shift starts at the identity level.",
+        "Your nervous system will only allow in what it believes you deserve, no matter what strategy you use.",
+        "Most women try to skip the Foundation. The ones who break through don't.",
+        "You did not come here to be comfortable. You came here to be transformed."
+      ],
+      actions: [
+        "Watch the Module 1 welcome video inside the Skool classroom.",
+        "Settle in. Take a breath. Let yourself arrive.",
+        "Introduce yourself in the Baddie Society community and declare you're starting the Quantum Queen."
+      ]
+    },
+    {
+      id: 1, title: "Intention Setting", dur: "10-15 min", type: "journal",
+      desc: "Before we go anywhere, we set the intention. This is your WHY — the deep, embodied reason you are doing this work. Your WHY will carry you through the moments in this container when it gets uncomfortable. And it will get uncomfortable. Growth always does. But you did not come here to be comfortable. You came here to be transformed.",
+      takeaways: [
+        "Your WHY is the foundation under everything you build in these 90 days.",
+        "An intention is not a goal. It is the frequency you commit to operating from.",
+        "Specificity is power. Vagueness is where you give yourself away.",
+        "Write fast. Do not edit. Let the truth pour out before your mind can soften it."
+      ],
+      actions: [
+        "Complete each intention setting prompt below — write fast, don't edit.",
+        "Read your answers back out loud when you finish.",
+        "Save your entries — you'll come back to these on Day 90."
+      ],
+      prompt: "I'm setting my intentions for the Quantum Queen — a 90-day identity reclamation. I'm done with the version of myself that kept me safe but kept me small. Help me go deeper on my WHY. Ask me 3-5 grounding questions about what I'm finally done with, what I'm here to release, what I'm calling in, and who I'm becoming. Speak to me like a Queen who is remembering, not a student who needs fixing. Be tender, honest, and unflinching.",
+      journals: [
+        { id: "intent-1", prompt: "I am starting this program because I am finally done with..." },
+        { id: "intent-2", prompt: "What I am here to release in these 90 days is..." },
+        { id: "intent-3", prompt: "The woman I am becoming feels like..." },
+        { id: "intent-4", prompt: "If nothing else changes in these 90 days, I want to leave with..." }
+      ]
+    },
+    {
+      id: 2, title: "The Intake Form", dur: "15-20 min", type: "intake",
+      desc: "An honest snapshot of where you are right now — at the very start of this program. This is not the woman you are becoming. This is the woman you are walking in as. Be radically honest. There is no judgement here. You are creating a baseline so that on Day 90, you can see exactly how far you have come.",
+      takeaways: [
+        "You cannot measure transformation if you do not document where you started.",
+        "Radical honesty here is what makes Day 90 powerful.",
+        "Nothing you write here makes you a bad woman. It makes you a real one.",
+        "Save this. On Day 90 you will read it back and be unrecognizable to her."
+      ],
+      actions: [
+        "Complete every section of the intake form below. Be radically honest.",
+        "Save your answers. Do not overthink, do not edit.",
+        "Set a reminder for Day 90 — you'll come back to this."
+      ],
+      intakeForm: [
+        { section: "Where I Am Right Now", fields: [
+          { id: "intake-1", label: "My current monthly income", placeholder: "Be specific" },
+          { id: "intake-2", label: "My current relationship status and how I feel about it" },
+          { id: "intake-3", label: "How I feel in my body right now" },
+          { id: "intake-4", label: "How I feel about my work or business right now" }
+        ]},
+        { section: "What's Not Working", fields: [
+          { id: "intake-5", label: "The pattern I am most tired of repeating" },
+          { id: "intake-6", label: "Where I shrink the most" },
+          { id: "intake-7", label: "What I am afraid people will think of me" },
+          { id: "intake-8", label: "The version of me I am ready to retire" }
+        ]},
+        { section: "What I Am Calling In", fields: [
+          { id: "intake-9", label: "Monthly income I am calling in", placeholder: "Be bold" },
+          { id: "intake-10", label: "What my body will feel like in 90 days" },
+          { id: "intake-11", label: "How I will feel about my work or business in 90 days" },
+          { id: "intake-12", label: "Who I will be at the end of this program" }
+        ]}
+      ]
+    },
+    {
+      id: 3, title: "The 8 Non-Negotiables of a Badass", dur: "10 min", type: "video",
+      desc: "Eight commitments. Eight choices. The Queen does not negotiate with herself on these. Watch the video, then make these your non-negotiables for the rest of these 90 days — and the rest of your life.",
+      takeaways: [
+        "The Queen does not negotiate with herself on what she has decided.",
+        "Non-negotiables are how you stop outsourcing your authority.",
+        "These eight are not rules. They are commitments to yourself.",
+        "Adopting them is how you signal to yourself that you have arrived."
+      ],
+      actions: [
+        "Watch the 8 Non-Negotiables video inside the Skool classroom.",
+        "Reflect on which one you struggle with the most — that's your edge.",
+        "Write the 8 non-negotiables in your journal where you can see them daily."
+      ],
+      journals: [
+        { id: "nn-1", prompt: "Which of the 8 non-negotiables do I struggle with the most, and why?" },
+        { id: "nn-2", prompt: "Which one am I already living — and how can I deepen it?" }
+      ]
+    },
+    {
+      id: 4, title: "The Personal Audit", dur: "20-30 min", type: "journal",
+      desc: "Before we build the new identity, we have to honestly see the old one. Who have you been performing for? Who taught you that version of yourself was acceptable? When did you first decide you weren't enough? This is the excavation. Not with shame. With radical clarity.",
+      takeaways: [
+        "You have been operating from a survival identity you did not consciously choose.",
+        "The roles you have been playing made sense once. They don't fit now.",
+        "Awareness without shame is the first act of sovereignty.",
+        "Tracing your origin story takes the unconscious story and brings it into the light."
+      ],
+      actions: [
+        "Complete the Identity Audit and Origin Story prompts below.",
+        "Take your time. Write longer than feels comfortable.",
+        "Identify the moment, the role, the performance — and name it."
+      ],
+      prompt: "I'm doing the Personal Audit in Module 1 of Quantum Queen. Help me do an honest, compassionate excavation of the identity I have been performing. Ask me reflective questions about who I have been performing for, who taught me that version of myself was acceptable, and when I first decided I wasn't enough. Help me trace the origin story without shame. Be radically clear but tender.",
+      journals: [
+        { id: "audit-1", prompt: "The Identity Audit — Who have I been performing for? Whose approval have I been chasing?" },
+        { id: "audit-2", prompt: "Who taught me that version of myself was acceptable? What did I have to suppress to earn their approval?" },
+        { id: "audit-3", prompt: "The Origin Story — Write the story of when you first decided you weren't enough. How old were you? What happened?" }
+      ]
+    },
+    {
+      id: 5, title: "The Victim Inventory", dur: "20-25 min", type: "journal",
+      desc: "Where in your life are you still giving your power away? Relationships, money, business, body — where have you been the victim of circumstances you actually have the power to change? This is not about blame. This is about honest accounting. You cannot reclaim power you have not yet acknowledged you gave away.",
+      takeaways: [
+        "Naming where you give power away is the first step in taking it back.",
+        "Every survival pattern was once protective. Most are no longer needed.",
+        "You cannot interrupt a pattern you cannot see clearly.",
+        "Your patterns cost you something. Name the cost. That's what makes you choose differently."
+      ],
+      actions: [
+        "Complete the Victim Inventory below — be radically honest about each area.",
+        "Then complete the Pattern Interrupt — identify your top 3 survival patterns.",
+        "Write down the cost of each pattern. That is your motivation."
+      ],
+      prompt: "I'm working through the Victim Inventory in Module 1 of Quantum Queen. Help me honestly map where I am still giving my power away — in my relationships, money, business, and body. Then help me identify my top 3 survival patterns: what they protect me from, what they cost me, and what they want me to learn. Be honest but never shaming.",
+      journals: [
+        { id: "victim-1", prompt: "Where am I giving my power away in my RELATIONSHIPS?" },
+        { id: "victim-2", prompt: "Where am I giving my power away with MONEY?" },
+        { id: "victim-3", prompt: "Where am I giving my power away in my BUSINESS or work?" },
+        { id: "victim-4", prompt: "Where am I giving my power away in my BODY?" },
+        { id: "victim-5", prompt: "Pattern Interrupt — My top 3 survival patterns are... What do they protect me from? What do they cost me?" }
+      ]
+    },
+    {
+      id: 6, title: "Identity Activation Meditation", dur: "20 min", type: "video",
+      desc: "A guided meditation to begin activating the new identity at the nervous system level. This is not about thinking your way into her. This is about feeling your way into her. Put on headphones. Lie down. Let yourself go there fully.",
+      takeaways: [
+        "Identity change happens at the nervous system level — not the mental level.",
+        "Feeling her in your body is what makes her real.",
+        "The new identity is already inside you. The meditation lets her come forward.",
+        "What you feel during this practice is the frequency you are calling in."
+      ],
+      actions: [
+        "Find a quiet, private space. Headphones on. Lie down if you can.",
+        "Press play on the Identity Activation Meditation inside the Skool classroom.",
+        "Afterwards, write what came up in the journal below."
+      ],
+      journals: [
+        { id: "med-1", prompt: "What did the activated version of me look like, feel like, move like?" },
+        { id: "med-2", prompt: "What surprised me? What did I feel in my body?" },
+        { id: "med-3", prompt: "What is one thing she would do differently this week?" }
+      ]
+    },
+    {
+      id: 7, title: "The Grief Letter", dur: "25-40 min", type: "letter",
+      desc: "Write a goodbye letter to the version of you that kept you safe but kept you small. She is not your enemy. She got you here. But she cannot take you where you are going. This letter is how you honor her, thank her, and release her — so the woman you are becoming can fully arrive.",
+      takeaways: [
+        "She kept you alive. Honor that.",
+        "You cannot become her if you are still being her.",
+        "Grief is the appropriate response to leaving behind a version of yourself that loved you.",
+        "Writing the letter makes the release real in your body, not just your mind."
+      ],
+      actions: [
+        "Find a quiet space. Light a candle if you have one.",
+        "Write the full letter below using the prompts as your guide.",
+        "When you finish — read it out loud. Then save it. You'll never need to write it again."
+      ],
+      prompt: "I'm writing my Grief Letter for Module 1 of Quantum Queen. This is a goodbye letter to the version of me that kept me safe but kept me small. Help me write this letter from a place of love, not shame. Ask me what she protected me from, what she sacrificed, what she did beautifully, and what I want to thank her for. Then help me release her with tenderness.",
+      letterPrompts: [
+        "Start by addressing her directly. What do you want to call her? (The Performer, The Good Girl, The Caretaker, The Striver — name her.)",
+        "Tell her you see her. Acknowledge what she has done for you — even the things that kept you small. She got you here.",
+        "Thank her for the specific ways she protected you. What was she trying to keep you safe from?",
+        "Tell her what she has cost you — gently. The things you couldn't be, have, or feel while she was running the show.",
+        "Tell her what you are reclaiming now. What is coming back online in you that she had to suppress?",
+        "Release her. Tell her she does not have to work anymore. She can rest. You are taking it from here.",
+        "Close the letter — sign it as the woman you are becoming."
+      ],
+      letterFieldId: "grief-letter"
+    }
+  ]
+};
+
+const STORAGE_KEY = "quantumqueen-module1-v1";
+
+function App() {
+  const [theme, setTheme] = useState("dark");
+  const [active, setActive] = useState(0);
+  const [done, setDone] = useState({});
+  const [journals, setJournals] = useState({});
+  const [copied, setCopied] = useState(false);
+  const [mobileNav, setMobileNav] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("");
+  const [loaded, setLoaded] = useState(false);
+
+  const C = theme === "dark" ? DARK : LIGHT;
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s.theme) setTheme(s.theme);
+        if (s.done) setDone(s.done);
+        if (s.journals) setJournals(s.journals);
+      }
+    } catch (err) {}
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ theme, done, journals }));
+    } catch (err) {}
+  }, [theme, done, journals, loaded]);
+
+  const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
+  const toggleDone = (i) => setDone({ ...done, [i]: !done[i] });
+
+  const updateJournal = (fieldId, text) => {
+    const existing = journals[fieldId] || {};
+    setJournals({ ...journals, [fieldId]: { text, savedAt: existing.savedAt } });
+  };
+
+  const saveLessonJournals = () => {
+    const stamp = new Date().toISOString();
+    const next = { ...journals };
+    const lesson = MODULE_DATA.lessons[active];
+    const ids = [];
+    if (lesson.journals) lesson.journals.forEach(j => ids.push(j.id));
+    if (lesson.intakeForm) lesson.intakeForm.forEach(s => s.fields.forEach(f => ids.push(f.id)));
+    if (lesson.letterFieldId) ids.push(lesson.letterFieldId);
+    ids.forEach(id => {
+      if (next[id] && next[id].text) next[id] = { ...next[id], savedAt: stamp };
+    });
+    setJournals(next);
+    setSaveStatus("Saved ✦");
+    setTimeout(() => setSaveStatus(""), 2000);
+  };
+
+  const copyText = (text) => {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.cssText = "position:fixed;left:-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {}
+  };
+
+  const getEntries = (lesson) => {
+    const out = [];
+    if (lesson.journals) lesson.journals.forEach(j => {
+      const e = journals[j.id];
+      if (e && e.text) out.push({ prompt: j.prompt, text: e.text });
+    });
+    if (lesson.intakeForm) lesson.intakeForm.forEach(s => s.fields.forEach(f => {
+      const e = journals[f.id];
+      if (e && e.text) out.push({ prompt: s.section + " — " + f.label, text: e.text });
+    }));
+    if (lesson.letterFieldId) {
+      const e = journals[lesson.letterFieldId];
+      if (e && e.text) out.push({ prompt: lesson.title, text: e.text });
+    }
+    return out;
+  };
+
+  const download = (filename, content) => {
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportLesson = (lesson) => {
+    const entries = getEntries(lesson);
+    const body = entries.length === 0 ? "No entries yet." : entries.map(en => en.prompt + "\n\n" + en.text + "\n\n────────────").join("\n\n");
+    const content = "BADASS ALCHEMY · QUANTUM QUEEN\n" + MODULE_DATA.title + " — " + MODULE_DATA.subtitle + "\n" + lesson.title + "\nExported: " + new Date().toLocaleString() + "\n\n═════════════\n\n" + body;
+    download("quantum-queen-" + lesson.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".txt", content);
+  };
+
+  const exportAll = () => {
+    const sections = MODULE_DATA.lessons.map(l => {
+      const ents = getEntries(l);
+      if (ents.length === 0) return null;
+      return l.title.toUpperCase() + "\n\n" + ents.map(en => en.prompt + "\n\n" + en.text).join("\n\n────────\n\n");
+    }).filter(Boolean).join("\n\n═════════════\n\n");
+    const content = "BADASS ALCHEMY · QUANTUM QUEEN\n" + MODULE_DATA.title + " — " + MODULE_DATA.subtitle + "\nFull Journal Export\nExported: " + new Date().toLocaleString() + "\n\n═════════════\n\n" + (sections || "No entries yet.");
+    download("quantum-queen-module-1-full-journal.txt", content);
+  };
+
+  const doneCount = Object.values(done).filter(Boolean).length;
+  const progress = Math.round((doneCount / MODULE_DATA.lessons.length) * 100);
+  const lesson = MODULE_DATA.lessons[active];
+  const sidebarOverlay = theme === "dark"
+    ? "linear-gradient(180deg, rgba(31,19,32,0.78) 0%, rgba(42,26,45,0.85) 100%)"
+    : "linear-gradient(180deg, rgba(251,245,248,0.88) 0%, rgba(245,232,239,0.92) 100%)";
+
+  return (
+    <div style={{ fontFamily: "'Montserrat',sans-serif", background: C.bg, color: C.txtSec, height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+
+      {/* TOP BAR */}
+      <div style={{ background: BRAND_GRAD, padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0, borderBottom: "1px solid " + C.border }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button onClick={() => setMobileNav(!mobileNav)} className="mobile-only" style={{ background: "none", border: "none", color: "#3A1E33", fontSize: 20, cursor: "pointer", padding: 4 }}>☰</button>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(255,255,255,0.4)" }}>
+            <span style={{ color: "#3A1E33", fontSize: 16, fontWeight: 700 }}>✦</span>
+          </div>
+          <div>
+            <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 18, color: "#FFFFFF", lineHeight: 1 }}>Quantum Queen</div>
+            <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, color: "#3A1E33", textTransform: "uppercase", marginTop: 3 }}>Badass Alchemy · Baddie Society</div>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <div style={{ display: "flex", gap: 24 }} className="desktop-only">
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#FFFFFF", textTransform: "uppercase", borderBottom: "2px solid #3A1E33", paddingBottom: 22, paddingTop: 22 }}>Classroom</span>
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "rgba(58,30,51,0.7)", textTransform: "uppercase", paddingBottom: 22, paddingTop: 22 }}>Community</span>
+          </div>
+          <button onClick={toggleTheme} style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.4)", borderRadius: 50, padding: "7px 14px", cursor: "pointer", color: "#3A1E33", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
+            <span style={{ fontSize: 13 }}>{theme === "dark" ? "☾" : "☀"}</span>
+            <span className="desktop-only">{theme === "dark" ? "Dark" : "Light"}</span>
+          </button>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, display: "flex", overflow: "hidden", position: "relative" }}>
+        {mobileNav && <div onClick={() => setMobileNav(false)} className="mobile-only" style={{ position: "absolute", inset: 0, background: "rgba(31,19,32,0.7)", zIndex: 99 }} />}
+
+        <div className={mobileNav ? "sidebar open" : "sidebar"} style={{
+          width: 300, minWidth: 300, display: "flex", flexDirection: "column", overflow: "hidden",
+          backgroundImage: sidebarOverlay + ", url('" + SIDEBAR_IMG + "')",
+          backgroundSize: "cover", backgroundPosition: "center",
+          borderRight: "1px solid " + C.border
+        }}>
+          <div style={{ padding: "26px 22px 22px", borderBottom: "1px solid " + C.border, background: theme === "dark" ? "rgba(22,12,24,0.35)" : "rgba(255,255,255,0.2)" }}>
+            <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: 1.5, color: theme === "dark" ? C.accentLt : C.accent, textTransform: "uppercase", marginBottom: 6 }}>{MODULE_DATA.title}</div>
+            <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 24, fontWeight: 700, color: C.txt, lineHeight: 1.15, marginBottom: 4 }}>{MODULE_DATA.subtitle}</div>
+            <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 12, fontStyle: "italic", color: theme === "dark" ? C.detail : C.accent, marginBottom: 16, lineHeight: 1.4 }}>{MODULE_DATA.tagline}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ flex: 1, height: 5, background: theme === "dark" ? "rgba(250,239,244,0.1)" : "rgba(110,56,101,0.15)", borderRadius: 100, overflow: "hidden" }}>
+                <div style={{ height: "100%", background: "linear-gradient(90deg," + C.accent + "," + C.accentLt + ")", width: progress + "%", borderRadius: 100, transition: "width .5s" }} />
+              </div>
+              <div style={{ fontSize: 9, fontWeight: 700, color: theme === "dark" ? C.accentLt : C.accent, minWidth: 30, textAlign: "right" }}>{progress}%</div>
+            </div>
+          </div>
+
+          <div style={{ flex: 1, overflowY: "auto", padding: "14px 12px 24px" }}>
+            {MODULE_DATA.lessons.map((l, i) => {
+              const isActive = active === i;
+              const isDone = !!done[i];
+              return (
+                <div key={i} onClick={() => { setActive(i); setMobileNav(false); }} style={{
+                  display: "flex", alignItems: "center", gap: 11, padding: "12px 14px", borderRadius: 12, cursor: "pointer", marginBottom: 4,
+                  background: isActive ? (theme === "dark" ? "rgba(110,56,101,0.45)" : "rgba(255,255,255,0.7)") : (theme === "dark" ? "rgba(22,12,24,0.3)" : "rgba(255,255,255,0.35)"),
+                  border: "1px solid " + (isActive ? C.borderMid : "transparent")
+                }}>
+                  <div style={{ width: 22, height: 22, minWidth: 22, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: isDone ? "linear-gradient(135deg," + C.accent + "," + C.accentLt + ")" : "transparent", border: isDone ? "none" : "1.5px solid " + C.borderMid }}>
+                    {isDone && <span style={{ color: "#FFFFFF", fontSize: 12, fontWeight: 700 }}>✓</span>}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 12.5, color: isActive ? C.txt : C.txtSec, fontWeight: isActive ? 700 : 500, lineHeight: 1.3 }}>{l.title}</div>
+                    <div style={{ fontSize: 8, color: theme === "dark" ? C.txtFaded : C.txtMuted, letterSpacing: 0.5, marginTop: 2, fontWeight: 600 }}>{l.dur}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ padding: "14px 16px", borderTop: "1px solid " + C.border, background: theme === "dark" ? "rgba(22,12,24,0.5)" : "rgba(255,255,255,0.4)" }}>
+            <button onClick={exportAll} style={{ width: "100%", fontSize: 9, fontWeight: 700, letterSpacing: 1.2, color: C.txt, background: "transparent", padding: "11px 12px", borderRadius: 50, border: "1px solid " + C.borderMid, cursor: "pointer", textTransform: "uppercase" }}>
+              ⬇ Download All Journals
+            </button>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto", background: C.bg }}>
+          <div style={{ maxWidth: 720, padding: "36px 40px 80px" }} className="main-inner lesson-content" key={active + "-" + theme}>
+
+            <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: 2, color: C.accent, textTransform: "uppercase", marginBottom: 10 }}>
+              Lesson {lesson.id + 1} of {MODULE_DATA.lessons.length} · {lesson.dur}
+            </div>
+
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 22 }} className="lesson-top">
+              <h1 style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: "clamp(26px,3.5vw,34px)", color: C.txt, lineHeight: 1.15 }}>{lesson.title}</h1>
+              <button onClick={() => toggleDone(active)} style={{ flexShrink: 0, marginTop: 6, fontSize: 9, fontWeight: 700, letterSpacing: 1.2, padding: "10px 18px", borderRadius: 50, border: done[active] ? "none" : "1px solid " + C.borderMid, cursor: "pointer", background: done[active] ? "linear-gradient(135deg," + C.accent + "," + C.accentLt + ")" : "transparent", color: done[active] ? C.moonPrl : C.txtMuted, textTransform: "uppercase" }}>
+                {done[active] ? "✦ Complete" : "○ Mark Complete"}
+              </button>
+            </div>
+
+            {lesson.type === "video" && (
+              <div style={{ background: BRAND_GRAD, borderRadius: 14, border: "1px solid " + C.borderMid, padding: "24px 26px", marginBottom: 28, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+                  <div style={{ width: 52, height: 52, minWidth: 52, borderRadius: "50%", background: "rgba(255,255,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(255,255,255,0.4)" }}>
+                    <span style={{ fontSize: 20, color: "#FFFFFF" }}>▶</span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: "#3A1E33", textTransform: "uppercase", marginBottom: 6 }}>Video Lesson</div>
+                    <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 20, fontWeight: 700, color: "#FFFFFF", lineHeight: 1.35 }}>Watch this lesson inside the <em style={{ color: "#2A1424", fontStyle: "italic", fontWeight: 700 }}>Skool classroom.</em></div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div style={{ fontWeight: 500, fontSize: 14.5, lineHeight: 1.8, color: C.txtSec, marginBottom: 36 }}>
+              {lesson.desc}
+            </div>
+
+            <SectionHeader icon="🌙" label="Key Takeaways" color={C.accent} />
+            <div style={{ marginBottom: 36 }}>
+              {lesson.takeaways.map((t, i) => (
+                <div key={i} style={{ background: C.bgCard, borderRadius: 12, border: "1px solid " + C.border, padding: "14px 18px", marginBottom: 8, display: "flex", alignItems: "flex-start", gap: 12, boxShadow: theme === "light" ? "0 2px 8px rgba(110,56,101,0.06)" : "none" }}>
+                  <span style={{ color: C.accent, fontSize: 13, marginTop: 3, flexShrink: 0 }}>✦</span>
+                  <span style={{ fontWeight: 500, fontSize: 13.5, color: C.txtSec, lineHeight: 1.7 }}>{t}</span>
+                </div>
+              ))}
+            </div>
+
+            <SectionHeader icon="⭐" label="Action Steps" color={C.accent} />
+            <div style={{ marginBottom: 36 }}>
+              {lesson.actions.map((a, i) => (
+                <div key={i} style={{ background: C.bgCard, borderRadius: 12, border: "1px solid " + C.border, padding: "14px 18px", marginBottom: 8, display: "flex", alignItems: "center", gap: 14, boxShadow: theme === "light" ? "0 2px 8px rgba(110,56,101,0.06)" : "none" }}>
+                  <div style={{ width: 28, height: 28, minWidth: 28, borderRadius: "50%", background: "linear-gradient(135deg," + C.accent + "," + C.darkMid + ")", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color: C.moonPrl, flexShrink: 0 }}>0{i + 1}</div>
+                  <span style={{ fontWeight: 500, fontSize: 13.5, color: C.txtSec, lineHeight: 1.65 }}>{a}</span>
+                </div>
+              ))}
+            </div>
+
+            {lesson.prompt && (
+              <div style={{ marginBottom: 36 }}>
+                <SectionHeader icon="✨" label="Claude Prompt" color={C.accent} />
+                <div style={{ background: BRAND_GRAD, borderRadius: 14, border: "1px solid rgba(255,255,255,0.25)", padding: 26, boxShadow: theme === "light" ? "0 6px 24px rgba(110,56,101,0.2)" : "0 6px 24px rgba(0,0,0,0.3)" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, gap: 10, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: "#3A1E33", textTransform: "uppercase" }}>Paste into Claude →</span>
+                    <button onClick={() => copyText(lesson.prompt)} style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: "#FFFFFF", background: "#3A1E33", padding: "9px 20px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", cursor: "pointer", textTransform: "uppercase" }}>
+                      {copied ? "✦ Copied" : "Copy"}
+                    </button>
+                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 14, lineHeight: 1.75, color: "#2A1424", whiteSpace: "pre-wrap" }}>{lesson.prompt}</div>
+                </div>
+              </div>
+            )}
+
+            {lesson.intakeForm && (
+              <div style={{ marginBottom: 36 }}>
+                <SectionHeader icon="🔮" label="Day 1 Intake — Where You Are Right Now" color={C.accent} status={saveStatus} />
+                {lesson.intakeForm.map((section, si) => (
+                  <div key={si} style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 24, marginBottom: 14, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                    <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontWeight: 700, fontSize: 19, color: theme === "dark" ? C.detail : C.accent, marginBottom: 16, lineHeight: 1.3 }}>{section.section}</div>
+                    {section.fields.map(f => (
+                      <div key={f.id} style={{ marginBottom: 14 }}>
+                        <div style={{ fontWeight: 700, fontSize: 12, color: C.txtSec, marginBottom: 6, letterSpacing: 0.3 }}>{f.label}</div>
+                        <textarea
+                          value={(journals[f.id] && journals[f.id].text) || ""}
+                          onChange={(ev) => updateJournal(f.id, ev.target.value)}
+                          placeholder={f.placeholder || "Be radically honest..."}
+                          rows={2}
+                          style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "12px 14px", fontSize: 13.5, color: C.txtSec, lineHeight: 1.6, resize: "vertical" }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+                <SaveExportButtons onSave={saveLessonJournals} onExport={() => exportLesson(lesson)} C={C} saveLabel="✦ Save Intake" />
+              </div>
+            )}
+
+            {lesson.journals && (
+              <div style={{ marginBottom: 36 }}>
+                <SectionHeader icon="🔮" label="Journal" color={C.accent} status={saveStatus} />
+                {lesson.journals.map(j => {
+                  const entry = journals[j.id];
+                  return (
+                    <div key={j.id} style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 22, marginBottom: 14, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                      <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 17, fontStyle: "italic", fontWeight: 700, color: theme === "dark" ? C.detail : C.accent, marginBottom: 6, lineHeight: 1.4 }}>{j.prompt}</div>
+                      {entry && entry.savedAt && (
+                        <div style={{ fontSize: 8, fontWeight: 700, color: C.txtFaded, letterSpacing: 1, marginBottom: 12, textTransform: "uppercase" }}>Last saved {new Date(entry.savedAt).toLocaleString()}</div>
+                      )}
+                      <textarea
+                        value={(entry && entry.text) || ""}
+                        onChange={(ev) => updateJournal(j.id, ev.target.value)}
+                        placeholder="Write what's true for you today, Queen..."
+                        rows={6}
+                        style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: C.txtSec, lineHeight: 1.75, resize: "vertical", marginTop: 8 }}
+                      />
+                    </div>
+                  );
+                })}
+                <SaveExportButtons onSave={saveLessonJournals} onExport={() => exportLesson(lesson)} C={C} saveLabel="✦ Save Entries" />
+                <div style={{ fontWeight: 500, fontSize: 11, color: C.txtFaded, lineHeight: 1.7, marginTop: 14, letterSpacing: 0.3 }}>
+                  Your entries save to this browser. Download the .txt to upload to Google Drive, Notion, or anywhere you keep your reflections.
+                </div>
+              </div>
+            )}
+
+            {lesson.letterPrompts && (
+              <div style={{ marginBottom: 36 }}>
+                <SectionHeader icon="💌" label="Write Your Letter" color={C.accent} status={saveStatus} />
+                <div style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 24, marginBottom: 14, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontWeight: 700, fontSize: 18, color: theme === "dark" ? C.detail : C.accent, marginBottom: 14, lineHeight: 1.3 }}>Let these prompts move you through the letter</div>
+                  {lesson.letterPrompts.map((p, i) => (
+                    <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start", padding: "10px 0", borderBottom: i < lesson.letterPrompts.length - 1 ? "1px solid " + C.border : "none" }}>
+                      <div style={{ fontSize: 9, fontWeight: 800, color: C.accent, letterSpacing: 1, minWidth: 22, marginTop: 2 }}>0{i + 1}</div>
+                      <div style={{ fontWeight: 500, fontSize: 13, color: C.txtSec, lineHeight: 1.65 }}>{p}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 22, marginBottom: 14, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                  <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontWeight: 700, fontSize: 17, color: theme === "dark" ? C.detail : C.accent, marginBottom: 6, lineHeight: 1.4 }}>Your Letter</div>
+                  {journals[lesson.letterFieldId] && journals[lesson.letterFieldId].savedAt && (
+                    <div style={{ fontSize: 8, fontWeight: 700, color: C.txtFaded, letterSpacing: 1, marginBottom: 12, textTransform: "uppercase" }}>Last saved {new Date(journals[lesson.letterFieldId].savedAt).toLocaleString()}</div>
+                  )}
+                  <textarea
+                    value={(journals[lesson.letterFieldId] && journals[lesson.letterFieldId].text) || ""}
+                    onChange={(ev) => updateJournal(lesson.letterFieldId, ev.target.value)}
+                    placeholder="Dear..."
+                    rows={16}
+                    style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "16px 18px", fontSize: 14, color: C.txtSec, lineHeight: 1.8, resize: "vertical", marginTop: 8 }}
+                  />
+                </div>
+                <SaveExportButtons onSave={saveLessonJournals} onExport={() => exportLesson(lesson)} C={C} saveLabel="✦ Save Letter" />
+              </div>
+            )}
+
+            <div style={{ marginTop: 44, paddingTop: 28, borderTop: "1px solid " + C.border, display: "flex", gap: 12, justifyContent: "space-between", alignItems: "center" }} className="lesson-bottom">
+              {active > 0 ? (
+                <button onClick={() => setActive(active - 1)} style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.txtMuted, background: "transparent", padding: "12px 22px", borderRadius: 50, border: "1px solid " + C.borderMid, cursor: "pointer", textTransform: "uppercase" }}>← Previous</button>
+              ) : <span />}
+              {active < MODULE_DATA.lessons.length - 1 && (
+                <button onClick={() => setActive(active + 1)} style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.moonPrl, background: "linear-gradient(135deg," + C.accent + "," + C.darkMid + ")", padding: "13px 24px", borderRadius: 50, border: "none", cursor: "pointer", textTransform: "uppercase" }}>Next Lesson →</button>
+              )}
+            </div>
+
+            <div style={{ marginTop: 56, paddingTop: 28, borderTop: "1px solid " + C.border, textAlign: "center" }}>
+              <div style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: 18, fontStyle: "italic", color: C.accent, marginBottom: 6 }}>You are the alchemy.</div>
+              <div style={{ fontSize: 8, fontWeight: 700, color: C.txtFaded, letterSpacing: 2, textTransform: "uppercase" }}>Badass Alchemy · Baddie Society · Quantum Queen</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SectionHeader({ icon, label, color, status }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+      <span style={{ fontSize: 16 }}>{icon}</span>
+      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, color: color, textTransform: "uppercase" }}>{label}</span>
+      {status && <span style={{ marginLeft: "auto", fontSize: 9, fontWeight: 700, letterSpacing: 1, color: color }}>{status}</span>}
+    </div>
+  );
+}
+
+function SaveExportButtons({ onSave, onExport, C, saveLabel }) {
+  return (
+    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4 }}>
+      <button onClick={onSave} style={{ flex: 1, minWidth: 120, fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.moonPrl, background: "linear-gradient(135deg," + C.accent + "," + C.darkMid + ")", padding: "12px 20px", borderRadius: 50, border: "none", cursor: "pointer", textTransform: "uppercase" }}>{saveLabel}</button>
+      <button onClick={onExport} style={{ flex: 1, minWidth: 120, fontSize: 10, fontWeight: 700, letterSpacing: 1, color: C.txt, background: "transparent", padding: "11px 20px", borderRadius: 50, border: "1px solid " + C.borderMid, cursor: "pointer", textTransform: "uppercase" }}>⬇ Download .txt</button>
+    </div>
+  );
+}
+
+// Mount
+document.getElementById('loading').style.display = 'none';
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+
+</body>
+</html>
