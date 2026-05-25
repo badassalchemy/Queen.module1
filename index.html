@@ -193,26 +193,128 @@ const MODULE_DATA = {
       desc: "Where in your life are you still giving your power away? Relationships, money, business, body — where have you been the victim of circumstances you actually have the power to change? This is not about blame. This is about honest accounting. You cannot reclaim power you have not yet acknowledged you gave away.",
       takeaways: [
         "Naming where you give power away is the first step in taking it back.",
-        "Every survival pattern was once protective. Most are no longer needed.",
-        "You cannot interrupt a pattern you cannot see clearly.",
-        "Your patterns cost you something. Name the cost. That's what makes you choose differently."
+        "Power leaks happen quietly — in over-explaining, over-giving, waiting for permission, shrinking.",
+        "This isn't blame. It's data. You can't change what you can't see.",
+        "Most women have power leaks in 2-3 areas. Notice yours without judgment."
       ],
       actions: [
         "Complete the Victim Inventory below — be radically honest about each area.",
-        "Then complete the Pattern Interrupt — identify your top 3 survival patterns.",
-        "Write down the cost of each pattern. That is your motivation."
+        "Notice where you feel resistance to writing. That's usually where the truth lives.",
+        "Save your entries — you'll come back to these in the next lesson on survival patterns."
       ],
-      prompt: "I'm working through the Victim Inventory in Module 1 of Quantum Queen. Help me honestly map where I am still giving my power away — in my relationships, money, business, and body. Then help me identify my top 3 survival patterns: what they protect me from, what they cost me, and what they want me to learn. Be honest but never shaming.",
       journals: [
-        { id: "victim-1", prompt: "Where am I giving my power away in my RELATIONSHIPS?" },
-        { id: "victim-2", prompt: "Where am I giving my power away with MONEY?" },
-        { id: "victim-3", prompt: "Where am I giving my power away in my BUSINESS or work?" },
-        { id: "victim-4", prompt: "Where am I giving my power away in my BODY?" },
-        { id: "victim-5", prompt: "Pattern Interrupt — My top 3 survival patterns are... What do they protect me from? What do they cost me?" }
+        { id: "victim-1", prompt: "Where am I giving my power away in my RELATIONSHIPS? Specific behaviors, words, choices, moments..." },
+        { id: "victim-2", prompt: "Where am I giving my power away with MONEY? Pricing, asking, receiving, spending, hiding..." },
+        { id: "victim-3", prompt: "Where am I giving my power away in my BUSINESS or work? Showing up, charging, taking up space, being visible..." },
+        { id: "victim-4", prompt: "Where am I giving my power away in my BODY? Listening, nourishing, resting, expressing, pleasure..." }
       ]
     },
     {
-      id: 6, title: "Identity Activation Meditation", dur: "20 min", type: "video",
+      id: 6, title: "Finding Your Survival Pattern", dur: "45-60 min", type: "pattern",
+      desc: "A survival pattern is a way of being you developed — usually young, usually without choosing it — to keep yourself safe in a situation where you didn't have other options. It worked. That's why it stuck. The problem is your nervous system doesn't know the situation is over. So you're still running the strategy decades later, in rooms where it's not protecting you anymore — it's the thing keeping you small. We are not going to ask you to pick one from a list. We are going to walk you through finding yours from your own data.",
+      takeaways: [
+        "Your survival pattern was adaptive once. It is not a flaw — it was intelligent. Your system chose it because it worked.",
+        "It runs automatically. You don't decide to do it — it happens before your conscious mind catches up. That's why willpower doesn't fix it.",
+        "It protects you from a specific feeling — rejection, abandonment, being seen, being too much, being not enough.",
+        "It costs you something specific — money, intimacy, opportunities, your voice, your truth.",
+        "Most women have more than one. A primary pattern, a secondary one underneath, and a few situational ones. This is normal."
+      ],
+      actions: [
+        "Move through the four steps below in order. Don't skip ahead.",
+        "Write longer than feels comfortable in Step 1. Specificity is the unlock.",
+        "Trust the process. If you do it cleanly, your pattern will reveal itself in your own data."
+      ],
+      patternFlow: {
+        step1: {
+          title: "Step 1 — Three Scenes",
+          intro: "Don't try to name your pattern yet. We're going to start with data, not diagnosis. Describe THREE specific scenes from the last 30 days where you felt yourself betray yourself. Not abstractions. Scenes. What was said, what you did, what you felt in your body, what you wish you'd done instead. Specificity is the unlock — patterns hide in abstractions and reveal themselves in scenes.",
+          fields: [
+            { id: "scene-money", label: "Scene 1 — A MONEY moment", placeholder: "A pricing decision you regret. A discount you didn't need to give. A moment you under-charged, over-delivered, or didn't ask. Walk me through exactly what happened..." },
+            { id: "scene-relationship", label: "Scene 2 — A RELATIONSHIP moment", placeholder: "A conversation that drained you. A yes that meant no. A boundary you didn't hold. A moment you shrunk in a room. What was said? What did you do? What did you feel in your body?" },
+            { id: "scene-body", label: "Scene 3 — A BODY or VISIBILITY moment", placeholder: "A time you overrode what your body was telling you. A moment you made yourself smaller, quieter, easier. A time you didn't post, didn't speak, didn't take up the space you actually deserved." }
+          ]
+        },
+        step2: {
+          title: "Step 2 — The Extraction",
+          intro: "Now look at your three scenes side by side. Don't look at the situations — look at YOUR move. The thing you did in all three. The pattern is hiding in the answer to these four questions.",
+          fields: [
+            { id: "extract-1", label: "What did I DO in all three scenes that was the same?", placeholder: "Not the situation — the move I made. Did I shrink? Fix? Push? Perform? Disappear? Control? Manage? Override? Please? Prove?" },
+            { id: "extract-2", label: "What was I trying to PREVENT in all three?", placeholder: "What feeling was I trying not to have? What outcome was I trying to avoid? Rejection? Conflict? Being too much? Being seen? Losing love?" },
+            { id: "extract-3", label: "What did it COST me in all three?", placeholder: "What did I not say, not get, not receive, not become? What was the price I paid for the protection?" },
+            { id: "extract-4", label: "Who TAUGHT me this move was the safe one?", placeholder: "When did I learn it? How old was I when this first worked? Whose voice is underneath it — a parent, a teacher, a culture, a moment in childhood?" }
+          ]
+        },
+        step3: {
+          title: "Step 3 — The Mirror",
+          intro: "Now you have YOUR data. Now we hand you the language. Read through the eight patterns below slowly. You're not shopping for one — you're looking for the one that makes your stomach drop. The one your scenes were already pointing to. You may see yourself in more than one. That's normal. Most women have a PRIMARY pattern, a secondary one underneath, and a few situational ones.",
+          patterns: [
+            {
+              name: "The Overachiever",
+              pattern: "She earns love by being impressive. Top of the class, top of the team, top of the leaderboard.",
+              protects: "Being unloved, unseen, unchosen, ordinary.",
+              costs: "Rest, intimacy, the ability to be loved for who she is instead of what she produces."
+            },
+            {
+              name: "The Fixer",
+              pattern: "She manages everyone else's emotions so the room stays safe. Reads every micro-expression. Smooths things over. Says yes when she means no.",
+              protects: "Conflict, abandonment, being the cause of someone else's pain.",
+              costs: "Her own needs, her own voice, relationships where she's actually known instead of useful."
+            },
+            {
+              name: "The Hustler",
+              pattern: "She outworks the fear. If she just does more, earns more, builds more, she'll finally feel safe.",
+              protects: "Scarcity, irrelevance, the terror of stillness.",
+              costs: "Her body, her nervous system, her capacity to receive — she's so busy producing she never lets anything actually land."
+            },
+            {
+              name: "The Shrinker",
+              pattern: "She takes up less space than she actually occupies. Softens her opinions. Apologizes for existing. Lets others go first.",
+              protects: "Envy, judgment, being a target, being 'too much.'",
+              costs: "Visibility, money, the relationships and rooms she's actually built for."
+            },
+            {
+              name: "The Independent One",
+              pattern: "She does it alone. Doesn't ask for help. Doesn't need anyone.",
+              protects: "Disappointment, being let down, owing anyone anything.",
+              costs: "Support, community, partnership, the experience of being held."
+            },
+            {
+              name: "The Pleaser",
+              pattern: "She shapes herself to whoever is in front of her. Different voice for different rooms. Different opinions depending on the audience.",
+              protects: "Rejection, being disliked, being cast out.",
+              costs: "A self. After enough years she genuinely doesn't know what she thinks, wants, or feels."
+            },
+            {
+              name: "The Controller",
+              pattern: "If she manages every variable, nothing bad can happen. Plans everything. Researches everything. Has a contingency for the contingency.",
+              protects: "Chaos, surprise, the feeling of being out of control that some early experience taught her was unbearable.",
+              costs: "Flow, spontaneity, intimacy, the actual aliveness she's looking for."
+            },
+            {
+              name: "The Spiritual Bypasser",
+              pattern: "She uses spiritual language to avoid feeling hard things. 'Everything happens for a reason.' 'I'm just trusting the timing.' 'I'm choosing peace.'",
+              protects: "Rage, grief, jealousy, despair — the feelings women were trained to swallow.",
+              costs: "Her power. The feelings she's bypassing are exactly where her aliveness lives."
+            }
+          ],
+          fields: [
+            { id: "name-primary", label: "Your PRIMARY pattern — what do you call her?", placeholder: "Use one of the names above, modify one, or make up your own. The name matters less than the recognition." },
+            { id: "name-secondary", label: "Your SECONDARY pattern — the one underneath", placeholder: "The one that takes over when the primary stops working, or the one that runs in different rooms than the primary. (Optional but illuminating.)" }
+          ]
+        },
+        step4: {
+          title: "Step 4 — The Friction Test",
+          intro: "Here's the move that separates real identification from performed identification. If you picked your pattern correctly — if you found the REAL one, not the flattering one or the one you've already worked on — this question will land with weight in your body. If it doesn't, you may need to go back to the scenes.",
+          fields: [
+            { id: "friction-1", label: "Which version of your life scares you more — the one where you KEEP this pattern, or the one where you DROP it?", placeholder: "Sit with this. The real pattern is the one whose loss feels like death — because your nervous system genuinely believes it's keeping you alive. If the answer comes too easily, you probably picked a pattern you've already processed. If your stomach drops, if you pause, if you don't know — you found her." },
+            { id: "friction-2", label: "What is the BODY SIGNAL that precedes your pattern?", placeholder: "The pattern always has a physical tell, and the tell happens a half-second before the behavior. The held breath before the yes. The clench in the jaw before the smoothing-over. The tightening in the chest before the discount. That half-second is the entire window where change is possible. Where do you feel it in your body?" },
+            { id: "friction-3", label: "What is ONE small interrupt you can practice this week?", placeholder: "Not a vow to never do the pattern again. A small somatic interrupt the next time you feel the body signal. Exhale before answering. Place a hand on your chest before saying yes. Pause for one breath before sending the email. Name the smallest doable interrupt." }
+          ]
+        }
+      }
+    },
+    {
+      id: 7, title: "Identity Activation Meditation", dur: "20 min", type: "video",
       desc: "A guided meditation to begin activating the new identity at the nervous system level. This is not about thinking your way into her. This is about feeling your way into her. Put on headphones. Lie down. Let yourself go there fully.",
       takeaways: [
         "Identity change happens at the nervous system level — not the mental level.",
@@ -232,7 +334,7 @@ const MODULE_DATA = {
       ]
     },
     {
-      id: 7, title: "The Grief Letter", dur: "25-40 min", type: "letter",
+      id: 8, title: "The Grief Letter", dur: "25-40 min", type: "letter",
       desc: "Write a goodbye letter to the version of you that kept you safe but kept you small. She is not your enemy. She got you here. But she cannot take you where you are going. This letter is how you honor her, thank her, and release her — so the woman you are becoming can fully arrive.",
       takeaways: [
         "She kept you alive. Honor that.",
@@ -316,6 +418,12 @@ function App() {
     if (lesson.journals) lesson.journals.forEach(j => ids.push(j.id));
     if (lesson.intakeForm) lesson.intakeForm.forEach(s => s.fields.forEach(f => ids.push(f.id)));
     if (lesson.letterFieldId) ids.push(lesson.letterFieldId);
+    if (lesson.patternFlow) {
+      ["step1", "step2", "step3", "step4"].forEach(k => {
+        const step = lesson.patternFlow[k];
+        if (step && step.fields) step.fields.forEach(f => ids.push(f.id));
+      });
+    }
     ids.forEach(id => {
       if (next[id] && next[id].text) next[id] = { ...next[id], savedAt: stamp };
     });
@@ -351,6 +459,17 @@ function App() {
     if (lesson.letterFieldId) {
       const e = journals[lesson.letterFieldId];
       if (e && e.text) out.push({ prompt: lesson.title, text: e.text });
+    }
+    if (lesson.patternFlow) {
+      ["step1", "step2", "step3", "step4"].forEach(stepKey => {
+        const step = lesson.patternFlow[stepKey];
+        if (step && step.fields) {
+          step.fields.forEach(f => {
+            const e = journals[f.id];
+            if (e && e.text) out.push({ prompt: step.title + " — " + f.label, text: e.text });
+          });
+        }
+      });
     }
     return out;
   };
@@ -716,7 +835,6 @@ function App() {
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           <div style={{ display: "flex", gap: 24 }} className="desktop-only">
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "#FFFFFF", textTransform: "uppercase", borderBottom: "2px solid #3A1E33", paddingBottom: 22, paddingTop: 22 }}>Classroom</span>
-            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: "rgba(58,30,51,0.7)", textTransform: "uppercase", paddingBottom: 22, paddingTop: 22 }}>Community</span>
           </div>
           <button onClick={toggleTheme} style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.4)", borderRadius: 50, padding: "7px 14px", cursor: "pointer", color: "#3A1E33", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>
             <span style={{ fontSize: 13 }}>{theme === "dark" ? "☾" : "☀"}</span>
@@ -843,21 +961,6 @@ function App() {
               ))}
             </div>
 
-            {lesson.prompt && (
-              <div style={{ marginBottom: 36 }}>
-                <SectionHeader icon="✨" label="Claude Prompt" color={C.accent} />
-                <div style={{ background: BRAND_GRAD, borderRadius: 14, border: "1px solid rgba(255,255,255,0.25)", padding: 26, boxShadow: theme === "light" ? "0 6px 24px rgba(110,56,101,0.2)" : "0 6px 24px rgba(0,0,0,0.3)" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, gap: 10, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 2, color: "#3A1E33", textTransform: "uppercase" }}>Paste into Claude →</span>
-                    <button onClick={() => copyText(lesson.prompt)} style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: "#FFFFFF", background: "#3A1E33", padding: "9px 20px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", cursor: "pointer", textTransform: "uppercase" }}>
-                      {copied ? "✦ Copied" : "Copy"}
-                    </button>
-                  </div>
-                  <div style={{ fontWeight: 500, fontSize: 14, lineHeight: 1.75, color: "#2A1424", whiteSpace: "pre-wrap" }}>{lesson.prompt}</div>
-                </div>
-              </div>
-            )}
-
             {lesson.intakeForm && (
               <div style={{ marginBottom: 36 }}>
                 <SectionHeader icon="🔮" label="Day 1 Intake — Where You Are Right Now" color={C.accent} status={saveStatus} />
@@ -926,6 +1029,141 @@ function App() {
                 />
                 <div style={{ fontWeight: 500, fontSize: 11, color: C.txtFaded, lineHeight: 1.7, marginTop: 14, letterSpacing: 0.3 }}>
                   Your entries auto-save to this browser. Download a PDF, .txt, or send straight to Google Drive to keep them safe forever.
+                </div>
+              </div>
+            )}
+
+            {lesson.patternFlow && (
+              <div style={{ marginBottom: 36 }}>
+                <SectionHeader icon="🌑" label="Finding Your Pattern — A Guided Process" color={C.accent} status={saveStatus} />
+
+                {/* STEP 1 — Three Scenes */}
+                <div style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 24, marginBottom: 18, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg," + C.accent + "," + C.accentLt + ")", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFFFFF", fontWeight: 800, fontSize: 12, flexShrink: 0 }}>01</div>
+                    <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.txt, lineHeight: 1.2 }}>{lesson.patternFlow.step1.title.replace("Step 1 — ", "")}</div>
+                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 13.5, lineHeight: 1.75, color: C.txtSec, marginBottom: 18, paddingLeft: 48 }}>
+                    {lesson.patternFlow.step1.intro}
+                  </div>
+                  {lesson.patternFlow.step1.fields.map(f => (
+                    <div key={f.id} style={{ marginBottom: 14 }}>
+                      <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontWeight: 700, fontSize: 16, color: theme === "dark" ? C.detail : C.accent, marginBottom: 6 }}>{f.label}</div>
+                      <textarea
+                        value={(journals[f.id] && journals[f.id].text) || ""}
+                        onChange={(ev) => updateJournal(f.id, ev.target.value)}
+                        placeholder={f.placeholder}
+                        rows={5}
+                        style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: C.txtSec, lineHeight: 1.7, resize: "vertical" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* STEP 2 — The Extraction */}
+                <div style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 24, marginBottom: 18, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg," + C.accent + "," + C.accentLt + ")", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFFFFF", fontWeight: 800, fontSize: 12, flexShrink: 0 }}>02</div>
+                    <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.txt, lineHeight: 1.2 }}>{lesson.patternFlow.step2.title.replace("Step 2 — ", "")}</div>
+                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 13.5, lineHeight: 1.75, color: C.txtSec, marginBottom: 18, paddingLeft: 48 }}>
+                    {lesson.patternFlow.step2.intro}
+                  </div>
+                  {lesson.patternFlow.step2.fields.map(f => (
+                    <div key={f.id} style={{ marginBottom: 14 }}>
+                      <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontWeight: 700, fontSize: 16, color: theme === "dark" ? C.detail : C.accent, marginBottom: 6 }}>{f.label}</div>
+                      <textarea
+                        value={(journals[f.id] && journals[f.id].text) || ""}
+                        onChange={(ev) => updateJournal(f.id, ev.target.value)}
+                        placeholder={f.placeholder}
+                        rows={4}
+                        style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: C.txtSec, lineHeight: 1.7, resize: "vertical" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* STEP 3 — The Mirror */}
+                <div style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 24, marginBottom: 18, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg," + C.accent + "," + C.accentLt + ")", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFFFFF", fontWeight: 800, fontSize: 12, flexShrink: 0 }}>03</div>
+                    <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.txt, lineHeight: 1.2 }}>{lesson.patternFlow.step3.title.replace("Step 3 — ", "")}</div>
+                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 13.5, lineHeight: 1.75, color: C.txtSec, marginBottom: 20, paddingLeft: 48 }}>
+                    {lesson.patternFlow.step3.intro}
+                  </div>
+
+                  {/* Pattern cards grid */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10, marginBottom: 22 }}>
+                    {lesson.patternFlow.step3.patterns.map((p, i) => (
+                      <div key={i} style={{ background: C.inputBg, border: "1px solid " + C.borderMid, borderRadius: 12, padding: "16px 18px" }}>
+                        <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 19, color: theme === "dark" ? C.accentLt : C.accent, marginBottom: 10, lineHeight: 1.2 }}>{p.name}</div>
+                        <div style={{ marginBottom: 8 }}>
+                          <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: 1.5, color: C.txtFaded, textTransform: "uppercase", marginBottom: 3 }}>The Pattern</div>
+                          <div style={{ fontWeight: 500, fontSize: 13, color: C.txtSec, lineHeight: 1.6 }}>{p.pattern}</div>
+                        </div>
+                        <div style={{ marginBottom: 8 }}>
+                          <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: 1.5, color: C.txtFaded, textTransform: "uppercase", marginBottom: 3 }}>Protects Her From</div>
+                          <div style={{ fontWeight: 500, fontSize: 13, color: C.txtSec, lineHeight: 1.6 }}>{p.protects}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: 1.5, color: C.txtFaded, textTransform: "uppercase", marginBottom: 3 }}>What It Costs Her</div>
+                          <div style={{ fontWeight: 500, fontSize: 13, color: C.txtSec, lineHeight: 1.6 }}>{p.costs}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {lesson.patternFlow.step3.fields.map(f => (
+                    <div key={f.id} style={{ marginBottom: 14 }}>
+                      <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontWeight: 700, fontSize: 16, color: theme === "dark" ? C.detail : C.accent, marginBottom: 6 }}>{f.label}</div>
+                      <textarea
+                        value={(journals[f.id] && journals[f.id].text) || ""}
+                        onChange={(ev) => updateJournal(f.id, ev.target.value)}
+                        placeholder={f.placeholder}
+                        rows={3}
+                        style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: C.txtSec, lineHeight: 1.7, resize: "vertical" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* STEP 4 — The Friction Test */}
+                <div style={{ background: C.bgCard, borderRadius: 14, border: "1px solid " + C.border, padding: 24, marginBottom: 18, boxShadow: theme === "light" ? C.shadow : "none" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg," + C.accent + "," + C.accentLt + ")", display: "flex", alignItems: "center", justifyContent: "center", color: "#FFFFFF", fontWeight: 800, fontSize: 12, flexShrink: 0 }}>04</div>
+                    <div style={{ fontFamily: "'Cormorant Garamond',serif", fontWeight: 700, fontSize: 22, color: C.txt, lineHeight: 1.2 }}>{lesson.patternFlow.step4.title.replace("Step 4 — ", "")}</div>
+                  </div>
+                  <div style={{ fontWeight: 500, fontSize: 13.5, lineHeight: 1.75, color: C.txtSec, marginBottom: 18, paddingLeft: 48 }}>
+                    {lesson.patternFlow.step4.intro}
+                  </div>
+                  {lesson.patternFlow.step4.fields.map(f => (
+                    <div key={f.id} style={{ marginBottom: 14 }}>
+                      <div style={{ fontFamily: "'Cormorant Garamond',serif", fontStyle: "italic", fontWeight: 700, fontSize: 16, color: theme === "dark" ? C.detail : C.accent, marginBottom: 6 }}>{f.label}</div>
+                      <textarea
+                        value={(journals[f.id] && journals[f.id].text) || ""}
+                        onChange={(ev) => updateJournal(f.id, ev.target.value)}
+                        placeholder={f.placeholder}
+                        rows={4}
+                        style={{ width: "100%", background: C.inputBg, border: "1px solid " + C.border, borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: C.txtSec, lineHeight: 1.7, resize: "vertical" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <SaveExportButtons
+                  onSave={saveLessonJournals}
+                  onExportTxt={() => exportLessonTxt(lesson)}
+                  onExportPDF={() => exportLessonPDF(lesson)}
+                  onExportDrive={() => exportLessonToDrive(lesson)}
+                  C={C}
+                  saveLabel="✦ Save Pattern Work"
+                  menuId="pattern"
+                  exportMenuOpen={exportMenuOpen}
+                  setExportMenuOpen={setExportMenuOpen}
+                />
+                <div style={{ fontWeight: 500, fontSize: 11, color: C.txtFaded, lineHeight: 1.7, marginTop: 14, letterSpacing: 0.3 }}>
+                  This is sacred data. Save it. Download a PDF and keep it close — you will reference your pattern again in Modules 3, 4, and 5.
                 </div>
               </div>
             )}
